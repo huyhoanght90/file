@@ -1,7 +1,7 @@
 python3 - << 'EOF'
 import base64, json, urllib.request, urllib.error
 
-token = "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"
+token = "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"
 repo = "huyhoanght90/file"
 filename = "EkitMulti"
 filepath = "/tmp/multi.txt"
