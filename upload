@@ -1,0 +1,28 @@
+import base64, json, urllib.request, urllib.error, os, glob
+
+token = "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"
+repo = "huyhoanght90/file"
+
+files = sorted(glob.glob("/tmp/labper.part_*"))
+total = len(files)
+
+proxy = urllib.request.ProxyHandler({"https": "http://ges-proxy.us.oracle.com:80"})
+opener = urllib.request.build_opener(proxy)
+
+for i, filepath in enumerate(files, 1):
+    filename = os.path.basename(filepath)
+    print(f"[{i}/{total}] Uploading {filename}...")
+    with open(filepath, "rb") as f:
+        content = base64.b64encode(f.read()).decode()
+    data = json.dumps({"message": f"upload {filename}", "content": content}).encode()
+    req = urllib.request.Request(
+        f"https://api.github.com/repos/{repo}/contents/{filename}",
+        data=data, method="PUT"
+    )
+    req.add_header("Authorization", f"token {token}")
+    req.add_header("Content-Type", "application/json")
+    try:
+        res = opener.open(req)
+        print(f"OK: {filename}")
+    except urllib.error.HTTPError as e:
+        print(f"Error: {filename} - {e.code} - {e.read()}")
